@@ -33,6 +33,11 @@ int* Init(int n)
     int *arr = (int*)malloc(sizeof(int)*n);
     return arr;
 }
+int get_val(int *arr, int index)
+{
+    int num = arr + index;
+    return *num;
+}
 void insert(int *arr, int n, int index)
 {
     int *num = (arr + index);
