@@ -2,16 +2,6 @@
 #include <GL/glut.h>
 #include "AlgoVizArray.h"
 
-int main()
-{
-    int *arr;
-    arr = Init(5);
-    for(int i=0;i<5;i++){
-	insert(arr, i, i);
-    }
-    print_arr(arr, 5);
-    return 0;
-}
 /* Arrange the N elements of ARRAY in random order.
 Only effective if N is much smaller than RAND_MAX;
 if this may not be the case, use a better random
@@ -35,7 +25,7 @@ int* Init(int n)
 }
 int get_val(int *arr, int index)
 {
-    int num = arr + index;
+    int *num = arr + index;
     return *num;
 }
 void insert(int *arr, int n, int index)
