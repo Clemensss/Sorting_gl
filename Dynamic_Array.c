@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <GL/glut.h>
-#include "AlgoVizArray.h"
+#include "Dynamic_Array.h"
 
 /* Arrange the N elements of ARRAY in random order.
 Only effective if N is much smaller than RAND_MAX;
