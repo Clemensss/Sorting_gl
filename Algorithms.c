@@ -23,12 +23,13 @@ int main(int argc, char *argv[])
 }
 void display_col(void)
 {
-    int *arr, size=500;
+    int *arr, size=300;
     arr = Init(size);
     make_array(arr, size);
     shuffle(arr, size);
     print_arr(arr, size);
-    quickSort(arr, 0, size-1, size-1);
+    bubbleSort(arr, size);
+    //quickSort(arr, 0, size-1, size-1);
 }
 
 void bubbleSort(int *arr, int n)
@@ -41,7 +42,6 @@ void bubbleSort(int *arr, int n)
            if(get_val(arr, j) > get_val(arr,j+1)){
               swap(arr, j, j+1);
 	      num = get_val(arr, j);
-	      column(2.0/n, num/DEN, i/DEN, -1.0, 0);
               }
 	  draw_array(n, arr);
         }
@@ -57,7 +57,7 @@ int partition (int *arr, int low, int high, int *size)
             i++;   
             swap(arr, i, j);
 	    draw_array(*size, arr);
-	    usleep(DELAY);
+	   // usleep(DELAY);
         }
     }
     swap(arr, i + 1, high);
