@@ -1,56 +1,28 @@
 #include <stdio.h>
 #include <GL/glut.h>
-#include "AlgoVizArray.h"
+#include "Dynamic_Array.h"
+#include "Graphics.h"
 
-#define LIST_SLOPE 1.2
-void display_col(void);
-void column(GLdouble x, GLdouble y, GLdouble x0, GLdouble y0);
-void make_list(double list_size, int *arr);
-void make_array(int *arr);
-void reshape(GLsizei width, GLsizei height) ;
-
-int main(int argc, char *argv[])
-{
-    glutInit(&argc, argv);
-    glutCreateWindow("Primeiro");
-    glutInitWindowSize(1360, 768);
-    glutInitWindowPosition(0, 0);
-    glutDisplayFunc(display_col);
-    glutReshapeFunc(reshape);
-    glutMainLoop();
-
-    return 0;
-}
-void display_col(void)
-{
-    int *arr;
-    arr = Init(100);
-    for(int i=1;i<=100;i++){
-	insert(arr, i, i-1);
-    }
-    shuffle(arr, 100);
-    print_arr(arr, 100);
-    make_list(100.0, arr);
-}
-void make_list(double list_size, int *arr)
+void draw_array(double list_size, int *arr)
 {
     int num;
-    double var;
-    glBegin(GL_QUADS);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    const double DEN =(list_size/2.0);
+    
     glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f(1.0f, 1.0f, 1.0f); // Red
     for(double i=1.0;i<=list_size; i++){
 	num = get_val(arr, (int)(i)-1);
 	printf("num: %d\n", num);
-	column(2.0/list_size, num/(list_size/2.0), num/(list_size/2.0), -1.0);
+	column(2.0/list_size, num/DEN, i/DEN, -1.0, 1);
     }
     glEnd();
     glFlush();
 }
 void column(GLdouble x, GLdouble y, 
-	    GLdouble x0, GLdouble y0)
+	    GLdouble x0, GLdouble y0, int color)
 {
+    glBegin(GL_QUADS);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
     GLdouble Position = x0+(-1.0);
     GLdouble Altura = y + y0;
     GLdouble Largura = x + Position;
