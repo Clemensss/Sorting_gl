@@ -1,14 +1,19 @@
 #include <stdio.h>
 #include <GL/glut.h>
+#include <unistd.h>
+
+//-----Project Libraries-----
+
 #include "Dynamic_Array.h"
 #include "Graphics.h"
-#include <unistd.h>
-#define DELAY 300
+#include "Algorithm.h"
 
-void display_col(void);
-void bubbleSort(int *arr, int n);
-int partition (int *arr, int low, int high, int *size);
-void quickSort(int *arr, int low, int high, int size);
+/*
+    Implementacoes dos Algoritimos de organizacao:
+	    -Bubble Sort
+	    -Quick Sort
+*/
+
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
@@ -32,6 +37,19 @@ void display_col(void)
     //quickSort(arr, 0, size-1, size-1);
 }
 
+
+
+/*
+
+	    Bubble Sort
+    
+  Implementacao bem simples do bubblesort
+  com array dinamico, que a cada swap 
+  desenha o array na tela atualizado
+
+*/
+
+
 void bubbleSort(int *arr, int n)
 {
    int i, j;
@@ -43,10 +61,28 @@ void bubbleSort(int *arr, int n)
               swap(arr, j, j+1);
 	      num = get_val(arr, j);
               }
-	  draw_array(n, arr);
+	  draw_array(n, arr); //Desenha o array
         }
     }
 }
+
+
+/*
+
+	    Quick Sort
+
+ Implementacao do quicksort com array dinamico, 
+ que a cada swap desenha o array na tela atualizado, 
+ utiliza a variavel size pra manter o verdadeiro 
+ tamanho do array, porque eu aprendi da maneira mais
+ dificil que o o maior numero do array nem sempre 
+ representa o tamanho dele.
+
+ eh...
+
+ */
+
+
 int partition (int *arr, int low, int high, int *size)
 {
     int pivot = get_val(arr, high);    
