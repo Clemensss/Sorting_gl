@@ -2,11 +2,13 @@
 #include <GL/glut.h>
 #include "Dynamic_Array.h"
 #include "Graphics.h"
+#include <unistd.h>
+#define DELAY 300
 
 void display_col(void);
 void bubbleSort(int *arr, int n);
-void quickSort(int *arr, int low, int high);
-int partition (int *arr, int low, int high);
+int partition (int *arr, int low, int high, int *size);
+void quickSort(int *arr, int low, int high, int size);
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
@@ -26,7 +28,7 @@ void display_col(void)
     make_array(arr, size);
     shuffle(arr, size);
     print_arr(arr, size);
-    quickSort(arr, 0, size-1);
+    quickSort(arr, 0, size-1, size-1);
 }
 
 void bubbleSort(int *arr, int n)
@@ -45,7 +47,7 @@ void bubbleSort(int *arr, int n)
         }
     }
 }
-int partition (int *arr, int low, int high)
+int partition (int *arr, int low, int high, int *size)
 {
     int pivot = get_val(arr, high);    
     int i = (low - 1);  
@@ -54,19 +56,20 @@ int partition (int *arr, int low, int high)
         if (get_val(arr, j) <= pivot){
             i++;   
             swap(arr, i, j);
-	    draw_array(high, arr);
+	    draw_array(*size, arr);
+	    usleep(DELAY);
         }
     }
     swap(arr, i + 1, high);
     return (i + 1);
 }
-void quickSort(int *arr, int low, int high)
+void quickSort(int *arr, int low, int high, int size)
 {
     if (low < high){
-        int pi = partition(arr, low, high);
+        int pi = partition(arr, low, high, &size);
 
-        quickSort(arr, low, pi - 1);
-        quickSort(arr, pi + 1, high);
+        quickSort(arr, low, pi - 1, size);
+        quickSort(arr, pi + 1, high, size);
     }
 } 
 

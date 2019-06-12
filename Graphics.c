@@ -8,10 +8,6 @@ void draw_array(double list_size, int *arr)
     int num;
     const double DEN =(list_size/2.0);
     
-    glBegin(GL_QUADS);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_COLOR_BUFFER_BIT);
     for(double i=1.0;i<=list_size; i++){
 	num = get_val(arr, (int)(i)-1);
 	printf("num: %d\n", num);
@@ -23,10 +19,14 @@ void draw_array(double list_size, int *arr)
 void column(GLdouble x, GLdouble y, 
 	    GLdouble x0, GLdouble y0, int color)
 {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
     GLdouble Position = x0+(-1.0);
     GLdouble Altura = y + y0;
     GLdouble Largura = x + Position;
     printf("altura %lf largura %lf\n", Altura, Largura);
+    glBegin(GL_QUADS);
+    glColor3f(1.0f, 1.0f, 1.0f);
       glVertex2f(Position, y0); //A(0,0)
       glVertex2f(Largura, y0); //do lado direito
       glVertex2f(Largura, Altura); //de cima
