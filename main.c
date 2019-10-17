@@ -98,12 +98,10 @@ int glfw_display(void)
     {
         int w, h;
 
-	glfwGetFramebufferSize(window, &w, &h);
-	glViewport(0, 0, w, h);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glUseProgram(program);
     
-	glDrawArrays(GL_TRIANGLES, 0, 24);
+	glDrawArrays(GL_TRIANGLES, 0, 48);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -127,7 +125,7 @@ int glfw_display(void)
 void column(float arr[4][12], short index,
 	    float x0, float y0, float x, float y)
 {
-    float placement = x0 - 1;
+    float placement = x0 - 1.0;
     float height    = y + y0;
     float width     = x + placement; 
 
@@ -150,12 +148,13 @@ void column(float arr[4][12], short index,
     /*----- values that are repeated ---- */
 
     //0,0
-    arr[index][8] = y0;
+    arr[index][8] = placement;
     arr[index][9] = y0;
 
     //1,1
     arr[index][10] = width;
     arr[index][11] = height;
+    printf("height %d width %d placement %d\n", height, x, placement);
 
 }
 void draw_array(double arrsize, int *arr, float twodarr[4][12])
@@ -163,13 +162,12 @@ void draw_array(double arrsize, int *arr, float twodarr[4][12])
     int arrnum, num;
     double i, deno = arrsize/2.0;
     
-    for(i = 1.0; i <= arrsize; i++){
+    for(i = 1.0; i < arrsize; i++){
 	num = i-1;
 	arrnum = arr[num];
-	/*arrnum = get_val(arr, i - 1);
-	printf("num: %d\n", arrnum);*/
+	printf("num: %d\n", arrnum);
 
-	column(twodarr, i, 2.0/arrnum, arrnum/deno, i/deno, -1.0);
+	column(twodarr, num, 2.0/arrnum, arrnum/deno, i/deno, -1.0);
     }
 }
 char* read_shader(FILE *fp)
