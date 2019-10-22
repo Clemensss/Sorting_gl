@@ -20,39 +20,25 @@
 //include <algorithm>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);  
+
+void swap(int *first, int *second);
+std::vector<int> make_arr(int size);
+void bubble_sort(std::vector<int> vect, GLFWwindow* window);
 
 unsigned int shader_maker (char *shader, unsigned int type);
 unsigned int program_maker(char* vertex_file, char* frag_file);
 
 void draw_array(std::vector<int> vect, GLFWwindow* window, 
-		unsigned int VAO, unsigned int program);
+		unsigned int VAO, unsigned int program, int index);
 
-void init_draw(std::vector<int> vec, unsigned int *VAO, unsigned int *program,
-	      float vertices[], unsigned int indices[]);
-
+void init_draw(std::vector<int> vec, unsigned int *VAO, unsigned int *program);
 char* read_shader(FILE *fp);
 
-int main()
+int main(int argc, char **argv)
 {
     /*initialize glfw context */
-
-    float vertices[] = 
-    {
-	// positions          // colors           // texture coords
-	 0.0f,  0.0f, 3.0f,   1.0f, 0.0f, 0.0f,     // top right
-	 0.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,     // bottom right
-	-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,     // bottom left
-	-1.0f,  0.0f, 3.0f,   1.0f, 1.0f, 0.0f     // top left 
-    };
-
-    unsigned int indices[] = 
-    {  // note that we start from 0!
-	0, 1, 3,   // first triangle
-	1, 2, 3    // second triangle
-    }; 
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -81,42 +67,88 @@ int main()
     //view port to easy some stuff and func for resizing
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
-    
-    std::vector<int> vect;
-    unsigned int VAO, program;
 
-    for(int i = 1; i <= 1000; i++)
-    {
-	vect.push_back(i);
-    }
+    int size;
+    sscanf(argv[1], "%d", &size); 
 
-    for(auto i : vect)
-    {
-	printf("%d\n", i);
-    }
+    std::cout << size;
 
+    std::vector<int> vect = make_arr(size);
 
-    init_draw(vect, &VAO, &program, vertices, indices);
+    std::random_shuffle(vect.begin(), vect.end());
 
-    while(!glfwWindowShouldClose(window))
-    {
-	draw_array(vect, window, VAO, program);
-
-	glfwSwapBuffers(window);
-	glfwPollEvents();
-    }
+    bubble_sort(vect, window);
 
     glfwTerminate();
     return 0;
+}
+
+std::vector<int> make_arr(int size)
+{
+    std::vector<int> vect;
+
+    for(int i = 1; i <= size; i++)
+    {
+	vect.push_back(i);
+    }
+    return vect;
+}
+    
+void bubble_sort(std::vector<int> vect, GLFWwindow* window)
+{
+    unsigned int VAO, program;
+    init_draw(vect, &VAO, &program);
+
+    bool sorted = false;
+
+    while(!sorted)
+    { 
+	sorted = true;
+	for(int i = 0; i < vect.size()-1; i++)
+	{
+	    int index;
+
+	    if(vect[i] > vect[i+1])
+	    {   
+		index = i;
+		sorted = false; 
+		swap(&vect[i], &vect[i+1]);
+	    }
+	    draw_array(vect, window, VAO, program, index);
+	}
+    }
+}
+
+void swap(int *first, int *second)
+{
+    int middle;
+    middle = *second;
+    *second = *first;
+    *first = middle;
 }
 
 /*
     initializes every bit of opengl that is needed for the program to run
     and "returns" the value of the VAO and the shader program.
 */
-void init_draw(std::vector<int> vect, unsigned int *VAO, unsigned int *program,
-	       float vertices[], unsigned int indices[])
+
+void init_draw(std::vector<int> vect, unsigned int *VAO, unsigned int *program)
 {
+    float vertices[] = 
+    {
+	// positions          // colors           // texture coords
+	 0.0f,  0.0f, 3.0f,   1.0f, 1.0f, 1.0f,     // top right
+	 0.0f, -1.0f, 0.0f,   1.0f, 1.0f, 1.0f,     // bottom right
+	-1.0f, -1.0f, 0.0f,   1.0f, 1.0f, 1.0f,     // bottom left
+	-1.0f,  0.0f, 3.0f,   1.0f, 1.0f, 1.0f     // top left 
+    };
+
+    unsigned int indices[] = 
+    {  // note that we start from 0!
+	0, 1, 3,   // first triangle
+	1, 2, 3    // second triangle
+    }; 
+
     unsigned int EBO, VBO;
     
     //size of the "array" coisa is the width of the rectangulae
@@ -138,10 +170,9 @@ void init_draw(std::vector<int> vect, unsigned int *VAO, unsigned int *program,
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     
-    glBufferData(GL_ARRAY_BUFFER, 24*sizeof(*vertices), vertices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
     
-    std::cout << "size: " << 24*sizeof(*vertices) << std::endl;
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(*indices), indices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
     
     char vert_file[] = "shader.vs";
     char frag_file[] = "shader.fs";
@@ -174,8 +205,8 @@ void init_draw(std::vector<int> vect, unsigned int *VAO, unsigned int *program,
     number var, and sends it to the uniform y_var, which will change the y
     values in only to vertexes in the chader, depending on their z value.
 */
-void draw_array(std::vector<int> vect, GLFWwindow* window, 
-		unsigned int VAO, unsigned int program)
+void draw_array(std::vector<int> vect, GLFWwindow* window,
+		unsigned int VAO, unsigned int program, int index)
 {
     
     //the stride at which x grows
@@ -185,13 +216,15 @@ void draw_array(std::vector<int> vect, GLFWwindow* window,
     float number;
 
     unsigned int trans_t_id = glGetUniformLocation(program, "trans_t");
+    unsigned int trans_c_id = glGetUniformLocation(program, "trans_c");
     unsigned int y_var_id = glGetUniformLocation(program, "y_var");
 
-    glClearColor(0.0f, 0.5, 0.5, 1.0f);
+    glClearColor(0.0f, 0.0, 0.0, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     
     //the jump in the x axes that the rect do 
     //and the the proportion at which the y axis must grow
+
     float x_jump = 0.0;
     float y_prop = 2.0/size;
 
@@ -201,13 +234,21 @@ void draw_array(std::vector<int> vect, GLFWwindow* window,
 	
 	//translation matrix for the x axis movement
 	glm::mat4 trans_t = glm::mat4(1.0f);
+	glm::mat4 trans_c = glm::mat4(1.0f);
+
 	trans_t = glm::translate(trans_t, glm::vec3(x_jump, 0.0, 0.0));
+	
+	if(i==vect[index])
+	    trans_c = glm::translate(trans_t, glm::vec3(0.0, 0.0, 1.0));
+	else
+	    trans_c = glm::translate(trans_t, glm::vec3(1.0, 1.0, 1.0));
 
 	glUseProgram(program);
     
 	//y growing in the shader 
 	glUniform1f(y_var_id, number);
 	glUniformMatrix4fv(trans_t_id, 1, GL_FALSE, glm::value_ptr(trans_t));
+	glUniformMatrix4fv(trans_c_id, 1, GL_FALSE, glm::value_ptr(trans_c));
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -217,8 +258,10 @@ void draw_array(std::vector<int> vect, GLFWwindow* window,
 	
 	//x growing
 	x_jump += x_stride;
+    }
 
-	    }
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 }
 
 unsigned int shader_maker(char *shader, unsigned int type)

@@ -5,6 +5,7 @@ layout (location = 1) in vec3 aColor;
 out vec4 ourColor;
 
 uniform mat4 trans_t;
+uniform mat4 trans_c;
 uniform float y_var;
 
 void main()
@@ -23,5 +24,5 @@ void main()
     vec4 new_pos = vec4(aPos.x, pos_y, 0.0, 1.0);
 
     gl_Position = trans_t*new_pos;
-    ourColor = trans_t*vec4(aColor, 1.0);
+    ourColor = trans_c*vec4(aColor, 1.0);
 }
